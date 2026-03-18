@@ -22,7 +22,7 @@ public class NetworkDebugDisplay : MonoBehaviour
 
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
-        // Добавляем префикс, чтобы понимать, от кого лог (если NetworkManager запущен)
+        // Добавляем префикс чтобы понимать от кого лог (если NetworkManager запущен)
         string prefix = "[System] ";
         if (NetworkManager.Singleton != null)
         {

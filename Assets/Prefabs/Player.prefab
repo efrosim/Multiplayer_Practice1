@@ -13,9 +13,13 @@ GameObject:
   - component: {fileID: 5369864158198015691}
   - component: {fileID: 2401696390696611459}
   - component: {fileID: 7427724610124132090}
-  - component: {fileID: 6836633594147048545}
   - component: {fileID: -2258000362166798419}
   - component: {fileID: 9015173822104833956}
+  - component: {fileID: 4928952635145837728}
+  - component: {fileID: 840108868481582883}
+  - component: {fileID: 3623877810974848214}
+  - component: {fileID: 8782546320072964268}
+  - component: {fileID: 662924636376482247}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -145,36 +149,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &6836633594147048545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 362549746377435639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6da9de331a162b469b81240fa062d8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkTest
-  ShowTopMostFoldoutHeaderGroup: 1
-  Health:
-    m_InternalValue: 100
-  Score:
-    m_InternalValue: 0
-  PlayerStatsText: {fileID: 4434100255930062897}
-  BulletSpawnPoint: {fileID: 1335345142985879900}
-  BulletPrefab: {fileID: 1094578691025535636, guid: 9a830bf1773dc74449afe1e555f08267, type: 3}
-  MouseSensitivity: 3
-  NormalCameraDistance: 5
-  AimCameraDistance: 2
-  PitchMinMax: {x: -40, y: 85}
-  MoveSpeed: 5
-  JumpForce: 7
-  Gravity: 15
-  DashSpeed: 20
-  DashDuration: 0.2
-  DashCooldown: 1.5
 --- !u!114 &-2258000362166798419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,6 +222,127 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4928952635145837728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba38da56b17474784be981471a33634, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerState
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetColor:
+    m_InternalValue: {r: 1, g: 1, b: 1, a: 1}
+  Health:
+    m_InternalValue: 100
+  Score:
+    m_InternalValue: 0
+  Nickname:
+    m_InternalValue:
+      utf8LengthInBytes: 0
+      bytes:
+        offset0000:
+          byte0000: 0
+          byte0001: 0
+          byte0002: 0
+          byte0003: 0
+          byte0004: 0
+          byte0005: 0
+          byte0006: 0
+          byte0007: 0
+          byte0008: 0
+          byte0009: 0
+          byte0010: 0
+          byte0011: 0
+          byte0012: 0
+          byte0013: 0
+          byte0014: 0
+          byte0015: 0
+        byte0016: 0
+        byte0017: 0
+        byte0018: 0
+        byte0019: 0
+        byte0020: 0
+        byte0021: 0
+        byte0022: 0
+        byte0023: 0
+        byte0024: 0
+        byte0025: 0
+        byte0026: 0
+        byte0027: 0
+        byte0028: 0
+        byte0029: 0
+--- !u!114 &840108868481582883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bc5b9b2ce3e43edbddc6484d8f9caef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUI
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerState: {fileID: 4928952635145837728}
+  _renderer: {fileID: 5369864158198015691}
+  PlayerStatsText: {fileID: 4434100255930062897}
+--- !u!114 &3623877810974848214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 942ee530787e4af99df60d4dd5ee49ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  ShowTopMostFoldoutHeaderGroup: 1
+  MoveSpeed: 5
+  DashSpeed: 20
+  DashDuration: 0.2
+  DashCooldown: 1.5
+--- !u!114 &8782546320072964268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57bcbfdab133496da431a00db4d2a2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
+  ShowTopMostFoldoutHeaderGroup: 1
+  MouseSensitivity: 3
+  NormalCameraDistance: 5
+  AimCameraDistance: 2
+  PitchMinMax: {x: -40, y: 85}
+--- !u!114 &662924636376482247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9913f7b9acf14919a6eb182889dbf1b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerState: {fileID: 4928952635145837728}
+  _renderer: {fileID: 5369864158198015691}
+  BulletSpawnPoint: {fileID: 1335345142985879900}
+  BulletPrefab: {fileID: 1094578691025535636, guid: 9a830bf1773dc74449afe1e555f08267, type: 3}
 --- !u!1 &648053486376607721
 GameObject:
   m_ObjectHideFlags: 0

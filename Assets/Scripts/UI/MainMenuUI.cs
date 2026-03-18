@@ -3,14 +3,13 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ConnectionUI : MonoBehaviour
+public class MainMenuUI : MonoBehaviour
 {[Header("UI Элементы")]
     public TMP_InputField NicknameInput; // Поле для ввода ника
     public Button HostButton;
     public Button ClientButton;
     public GameObject MenuPanel; // Панель меню, чтобы скрыть её после старта
-
-    // Статическая переменная, чтобы игрок мог забрать свой ник при спавне
+    
     public static string PlayerNickname { get; private set; } = "Player";
 
     private void Start()
