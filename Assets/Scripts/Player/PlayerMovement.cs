@@ -50,37 +50,43 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (base.IsServerInitialized)
         {
-            // ИСПРАВЛЕНИЕ РАССИНХРОНА: Разносим игроков при спавне, 
-            // чтобы CharacterController не выталкивал их локально
             Vector3 randomSpawn = new Vector3(Random.Range(-5f, 5f), 1f, Random.Range(-5f, 5f));
             Teleport(randomSpawn);
         }
 
-        if (base.Owner.IsLocalClient) _mainCamera = Camera.main;
+        if (base.Owner.IsLocalClient) 
+        {
+            _mainCamera = Camera.main;
+        }
+        else if (!base.IsServerInitialized)
+        {
+            // Отключаем физику для чужих игроков на клиенте, 
+            // чтобы NetworkTransform мог плавно их двигать без сопротивления CharacterController
+            _cc.enabled = false;
+        }
         
         base.TimeManager.OnTick += OnTick;
         base.TimeManager.OnPostTick += OnPostTick;
     }
 
-    // Универсальный метод для жесткой телепортации (спавн, респавн)
     public void Teleport(Vector3 position)
     {
+        bool wasEnabled = _cc.enabled;
         _cc.enabled = false;
         transform.position = position;
-        _cc.enabled = true;
+        _cc.enabled = wasEnabled;
         
         if (base.IsServerInitialized) 
             TeleportObserversRpc(position);
-    }
-
-    [ObserversRpc]
+    }[ObserversRpc]
     private void TeleportObserversRpc(Vector3 position)
     {
-        if (base.IsServerInitialized) return; // Сервер уже переместил себя выше
+        if (base.IsServerInitialized) return; 
         
+        bool wasEnabled = _cc.enabled;
         _cc.enabled = false;
         transform.position = position;
-        _cc.enabled = true;
+        _cc.enabled = wasEnabled;
     }
 
     public override void OnStopNetwork()
@@ -94,24 +100,23 @@ public class PlayerMovement : NetworkBehaviour
 
     private void OnTick()
     {
-        // В OnTick теперь ТОЛЬКО Replicate (ввод и движение)
+        // ИСПРАВЛЕНО: Только владелец отправляет инпуты.
+        // Обозреватели НЕ ДОЛЖНЫ вызывать Replicate(default), иначе они будут стоять на месте!
         if (base.IsOwner)
         {
             Replicate(BuildMoveData());
-        }
-        else
-        {
-            Replicate(default);
         }
     }
 
     private void OnPostTick()
     {
-        // В OnPostTick вызываем метод создания данных для сверки
-        CreateReconcile();
+        // ИСПРАВЛЕНО: Только сервер должен создавать данные для сверки
+        if (base.IsServerInitialized)
+        {
+            CreateReconcile();
+        }
     }
 
-    // НОВОЕ ТРЕБОВАНИЕ FISHNET V4: Обязательное переопределение CreateReconcile
     public override void CreateReconcile()
     {
         ReconcileData rd = new ReconcileData
@@ -152,8 +157,6 @@ public class PlayerMovement : NetworkBehaviour
         float delta = (float)base.TimeManager.TickDelta;
         Vector3 finalMovement = Vector3.zero;
 
-        // ИСПРАВЛЕНО: Мы больше не делаем "return;" если игрок мертв. 
-        // FishNet требует, чтобы метод Replicate всегда доходил до конца, иначе ломается буфер тиков.
         if (_playerState.IsAlive.Value)
         {
             Vector3 moveDir = md.CamForward * md.Vertical + md.CamRight * md.Horizontal;
@@ -184,23 +187,26 @@ public class PlayerMovement : NetworkBehaviour
             }
         }
 
-        // Гравитация и применение движения работают ВСЕГДА (даже если игрок мертв, его труп должен упасть на пол)
         _verticalVelocity += Gravity * delta;
         finalMovement.y = _verticalVelocity;
 
-        _cc.Move(finalMovement * delta);
-
-        if (_cc.isGrounded) _verticalVelocity = -2f;
+        // Двигаем только если CharacterController включен (он выключен у обозревателей)
+        if (_cc.enabled)
+        {
+            _cc.Move(finalMovement * delta);
+            if (_cc.isGrounded) _verticalVelocity = -2f;
+        }
     }
 
     [Reconcile]
     private void Reconcile(ReconcileData rd, Channel channel = Channel.Unreliable)
     {
-        _cc.enabled = false; // Отключаем CC для жесткой телепортации при откате
+        bool wasEnabled = _cc.enabled;
+        _cc.enabled = false; 
         transform.position = rd.Position;
         transform.rotation = rd.Rotation;
         _verticalVelocity = rd.VerticalVelocity;
         _dashTimer = rd.DashTimer;
-        _cc.enabled = true;
+        _cc.enabled = wasEnabled;
     }
 }

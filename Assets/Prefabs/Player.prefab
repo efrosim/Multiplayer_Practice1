@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 1872492055945568949}
   - component: {fileID: 8118839793405855293}
   - component: {fileID: 5076633414872257610}
+  - component: {fileID: -940047377371683777}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -166,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerState
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
 --- !u!114 &840108868481582883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,9 +182,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUI
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
   _playerState: {fileID: 4928952635145837728}
-  _renderer: {fileID: 5369864158198015691}
   PlayerStatsText: {fileID: 4434100255930062897}
 --- !u!114 &3623877810974848214
 MonoBehaviour:
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
   _playerState: {fileID: 4928952635145837728}
   MoveSpeed: 5
   DashSpeed: 20
@@ -219,7 +219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
   MouseSensitivity: 3
   NormalCameraDistance: 5
   AimCameraDistance: 2
@@ -263,10 +263,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
   _playerState: {fileID: 4928952635145837728}
   _renderer: {fileID: 5369864158198015691}
-  _characterController: {fileID: 6793240162633684196}
 --- !u!114 &8118839793405855293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,7 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 5076633414872257610}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 5076633414872257610}
   _playerState: {fileID: 4928952635145837728}
   BulletSpawnPoint: {fileID: 1335345142985879900}
   BulletPrefab: {fileID: 1094578691025535636, guid: 9a830bf1773dc74449afe1e555f08267, type: 3}
@@ -304,7 +303,13 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 4928952635145837728}
+  - {fileID: 840108868481582883}
+  - {fileID: 3623877810974848214}
+  - {fileID: 8782546320072964268}
+  - {fileID: 1872492055945568949}
+  - {fileID: 8118839793405855293}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -315,7 +320,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: 0
+  _initializedTimestamp: -8584276979277326485
   NetworkObserver: {fileID: 0}
   _enablePrediction: 0
   _predictionType: 0
@@ -331,15 +336,61 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 2092870565765373345
   SceneId: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Position: {x: 1.75884, y: 1.609, z: -7.19889}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &-940047377371683777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Component.Transforming.NetworkTransform
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
+  _componentConfiguration: 0
+  _synchronizeParent: 0
+  _packing:
+    Position: 1
+    Rotation: 1
+    Scale: 0
+  _useScaledTime: 1
+  _interpolation: 2
+  _extrapolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  _clientAuthoritative: 1
+  _sendToOwner: 1
+  _interval: 1
+  _synchronizePosition: 1
+  _positionSensitivity: 0.001
+  _positionSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeRotation: 1
+  _rotationSnapping:
+    X: 0
+    Y: 0
+    Z: 0
+  _synchronizeScale: 1
+  _scaleSensitivity: 0.001
+  _scaleSnapping:
+    X: 0
+    Y: 0
+    Z: 0
 --- !u!1 &648053486376607721
 GameObject:
   m_ObjectHideFlags: 0
