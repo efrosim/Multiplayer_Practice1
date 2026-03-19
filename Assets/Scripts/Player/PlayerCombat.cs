@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerCombat : NetworkBehaviour, IDamageable
+public class PlayerCombat : NetworkBehaviour
 {
     [SerializeField] private PlayerState _playerState;
-    [SerializeField] private Renderer _renderer;
-    
     public Transform BulletSpawnPoint;
     public GameObject BulletPrefab;
+    
+    public float Cooldown = 0.4f;
+    private float _lastShotTime;
     private Camera _mainCamera;
 
     private void Start()
@@ -18,7 +18,7 @@ public class PlayerCombat : NetworkBehaviour, IDamageable
 
     private void Update()
     {
-        if (!IsOwner) return;
+        if (!IsOwner || !_playerState.IsAlive.Value) return; // Мертвые не стреляют
         HandleInput();
     }
 
@@ -34,68 +34,28 @@ public class PlayerCombat : NetworkBehaviour, IDamageable
             Vector3 shootDirection = Input.GetMouseButton(1) && _mainCamera != null 
                 ? _mainCamera.transform.forward 
                 : transform.forward;
+                
+            // Передаем запрос на сервер
             ShootServerRpc(BulletSpawnPoint.position, shootDirection);
         }
     }
 
     [ServerRpc]
-    private void ShootServerRpc(Vector3 spawnPos, Vector3 direction)
+    private void ShootServerRpc(Vector3 spawnPos, Vector3 direction, ServerRpcParams rpcParams = default)
     {
+        // СЕРВЕРНАЯ ВАЛИДАЦИЯ
+        if (!_playerState.IsAlive.Value) return; // 1. Жив ли?
+        if (_playerState.Ammo.Value <= 0) return; // 2. Есть ли патроны?
+        if (Time.time < _lastShotTime + Cooldown) return; // 3. Прошел ли кулдаун?
+
+        _lastShotTime = Time.time;
+        _playerState.Ammo.Value--; // Тратим патрон
+
         GameObject bullet = Instantiate(BulletPrefab, spawnPos, Quaternion.LookRotation(direction));
         if (bullet.TryGetComponent(out NetworkBullet bulletScript))
         {
-            bulletScript.OwnerId = OwnerClientId;
+            bulletScript.OwnerId = rpcParams.Receive.SenderClientId;
         }
-        bullet.GetComponent<NetworkObject>().Spawn();
-    }
-
-    public void TakeDamage(int damage, ulong shooterId)
-    {
-        if (!IsServer) return;
-
-        _playerState.Health.Value = Mathf.Max(0, _playerState.Health.Value - damage);
-        HitFlashClientRpc();
-
-        if (_playerState.Health.Value == 0)
-        {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(shooterId, out var shooterClient))
-            {
-                var shooterState = shooterClient.PlayerObject.GetComponent<PlayerState>();
-                if (shooterState != null) shooterState.Score.Value += 1;
-            }
-
-            _playerState.Health.Value = 100;
-            Vector3 randomSpawnPoint = new Vector3(Random.Range(-5f, 5f), transform.position.y, Random.Range(-5f, 5f));
-            ForceRespawnClientRpc(randomSpawnPoint);
-        }
-    }
-
-    [ClientRpc]
-    private void HitFlashClientRpc()
-    {
-        StartCoroutine(FlashRedRoutine());
-    }
-
-    private IEnumerator FlashRedRoutine()
-    {
-        _renderer.material.color = Color.red;
-        yield return new WaitForSeconds(0.15f);
-        _renderer.material.color = _playerState.NetColor.Value;
-    }
-
-    [ClientRpc]
-    private void ForceRespawnClientRpc(Vector3 spawnPosition)
-    {
-        if (IsOwner)
-        {
-            if (TryGetComponent(out Unity.Netcode.Components.NetworkTransform netTransform))
-            {
-                netTransform.Teleport(spawnPosition, transform.rotation, transform.localScale);
-            }
-            else
-            {
-                transform.position = spawnPosition;
-            }
-        }
+        bullet.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
     }
 }

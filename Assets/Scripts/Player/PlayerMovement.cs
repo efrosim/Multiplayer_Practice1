@@ -1,17 +1,16 @@
 ﻿using Unity.Netcode;
-using UnityEngine;
-
+using UnityEngine;[RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : NetworkBehaviour
 {
-    public float MoveSpeed = 5f;
-    public float DashSpeed = 20f;
-    public float DashDuration = 0.2f;
-    public float DashCooldown = 1.5f;
+    [SerializeField] private PlayerState _playerState;
+    private CharacterController _cc;
     
-    private float _dashTimer;
-    private float _dashCooldownTimer;
-    private Vector3 _dashDirection;
+    public float MoveSpeed = 5f;
+    public float Gravity = -9.81f;
+    private float _verticalVelocity;
     private Camera _mainCamera;
+
+    private void Awake() => _cc = GetComponent<CharacterController>();
 
     private void Start()
     {
@@ -20,15 +19,16 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
+        // Двигается только владелец и только если жив
+        if (!IsOwner || !_playerState.IsAlive.Value) return;
         HandleMovement();
     }
 
     private void HandleMovement()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 inputDir = new Vector3(horizontal, 0, vertical).normalized;
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        Vector3 inputDir = new Vector3(h, 0, v).normalized;
         Vector3 moveDir = Vector3.zero;
 
         if (inputDir.magnitude >= 0.1f && _mainCamera != null)
@@ -40,32 +40,15 @@ public class PlayerMovement : NetworkBehaviour
             moveDir = camForward * inputDir.z + camRight * inputDir.x;
         }
 
-        if (_dashCooldownTimer > 0) _dashCooldownTimer -= Time.deltaTime;
+        _verticalVelocity += Gravity * Time.deltaTime;
+        Vector3 finalMovement = moveDir * MoveSpeed;
+        finalMovement.y = _verticalVelocity;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _dashCooldownTimer <= 0 && moveDir != Vector3.zero && Cursor.lockState == CursorLockMode.Locked)
-        {
-            _dashTimer = DashDuration;
-            _dashCooldownTimer = DashCooldown;
-            _dashDirection = moveDir;
-        }
+        _cc.Move(finalMovement * Time.deltaTime);
 
-        float currentSpeed = MoveSpeed;
-        Vector3 finalMovement = Vector3.zero;
+        if (_cc.isGrounded) _verticalVelocity = -2f; // Прилипание к земле
 
-        if (_dashTimer > 0)
-        {
-            _dashTimer -= Time.deltaTime;
-            currentSpeed = DashSpeed;
-            finalMovement = _dashDirection * currentSpeed;
-        }
-        else
-        {
-            finalMovement = moveDir * currentSpeed;
-        }
-
-        transform.position += finalMovement * Time.deltaTime;
-
-        if (moveDir != Vector3.zero && _dashTimer <= 0)
+        if (moveDir != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);

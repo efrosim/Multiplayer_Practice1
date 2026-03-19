@@ -19,7 +19,9 @@ GameObject:
   - component: {fileID: 840108868481582883}
   - component: {fileID: 3623877810974848214}
   - component: {fileID: 8782546320072964268}
-  - component: {fileID: 662924636376482247}
+  - component: {fileID: 6793240162633684196}
+  - component: {fileID: 1872492055945568949}
+  - component: {fileID: 8118839793405855293}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -136,7 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1073566258
+  GlobalObjectIdHash: 30632492
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -241,6 +243,10 @@ MonoBehaviour:
     m_InternalValue: 100
   Score:
     m_InternalValue: 0
+  IsAlive:
+    m_InternalValue: 1
+  Ammo:
+    m_InternalValue: 10
   Nickname:
     m_InternalValue:
       utf8LengthInBytes: 0
@@ -305,10 +311,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   ShowTopMostFoldoutHeaderGroup: 1
+  _playerState: {fileID: 4928952635145837728}
   MoveSpeed: 5
-  DashSpeed: 20
-  DashDuration: 0.2
-  DashCooldown: 1.5
+  Gravity: -9.81
 --- !u!114 &8782546320072964268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,7 +331,32 @@ MonoBehaviour:
   NormalCameraDistance: 5
   AimCameraDistance: 2
   PitchMinMax: {x: -40, y: 85}
---- !u!114 &662924636376482247
+--- !u!143 &6793240162633684196
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1872492055945568949
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -335,14 +365,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 362549746377435639}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9913f7b9acf14919a6eb182889dbf1b1, type: 3}
+  m_Script: {fileID: 11500000, guid: e76345eb333d46fea2e9252c28f1f2b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerState: {fileID: 4928952635145837728}
+  _renderer: {fileID: 5369864158198015691}
+  _characterController: {fileID: 6793240162633684196}
+--- !u!114 &8118839793405855293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233d69538dae4a8ea59df1cad98e4184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   ShowTopMostFoldoutHeaderGroup: 1
   _playerState: {fileID: 4928952635145837728}
-  _renderer: {fileID: 5369864158198015691}
   BulletSpawnPoint: {fileID: 1335345142985879900}
   BulletPrefab: {fileID: 1094578691025535636, guid: 9a830bf1773dc74449afe1e555f08267, type: 3}
+  Cooldown: 0.4
 --- !u!1 &648053486376607721
 GameObject:
   m_ObjectHideFlags: 0

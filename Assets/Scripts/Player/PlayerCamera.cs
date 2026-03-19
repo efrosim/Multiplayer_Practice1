@@ -15,26 +15,28 @@ public class PlayerCamera : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsOwner)
+        if (!IsOwner)
         {
-            _mainCamera = Camera.main;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            _yaw = transform.eulerAngles.y;
-            _currentCameraDistance = NormalCameraDistance;
+            enabled = false; // Полностью отключаем скрипт для чужих игроков
+            return;
         }
+
+        _mainCamera = Camera.main;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        _yaw = transform.eulerAngles.y;
+        _currentCameraDistance = NormalCameraDistance;
     }
 
     private void Update()
     {
-        if (!IsOwner) return;
         HandleCursorLock();
         HandleCameraInput();
     }
 
     private void LateUpdate()
     {
-        if (!IsOwner || _mainCamera == null) return;
+        if (_mainCamera == null) return;
 
         Vector3 targetCenter = transform.position + Vector3.up * 1.5f;
         Quaternion camRotation = Quaternion.Euler(_pitch, _yaw, 0);

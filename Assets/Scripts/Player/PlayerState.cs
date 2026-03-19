@@ -8,6 +8,10 @@ public class PlayerState : NetworkBehaviour
     public NetworkVariable<int> Health = new NetworkVariable<int>(100);
     public NetworkVariable<int> Score = new NetworkVariable<int>(0);
     
+    // НОВОЕ: Состояние жизни и патроны
+    public NetworkVariable<bool> IsAlive = new NetworkVariable<bool>(true);
+    public NetworkVariable<int> Ammo = new NetworkVariable<int>(10);
+    
     public NetworkVariable<FixedString32Bytes> Nickname = new NetworkVariable<FixedString32Bytes>(
         "", 
         NetworkVariableReadPermission.Everyone, 
@@ -20,9 +24,7 @@ public class PlayerState : NetworkBehaviour
         {
             SubmitNicknameServerRpc(MainMenuUI.PlayerNickname);
         }
-    }
-
-    [ServerRpc]
+    }[ServerRpc]
     private void SubmitNicknameServerRpc(string nickname)
     {
         string safeValue = string.IsNullOrWhiteSpace(nickname) ? $"Player_{OwnerClientId}" : nickname.Trim();

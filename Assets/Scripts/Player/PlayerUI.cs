@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,7 +15,9 @@ public class PlayerUI : NetworkBehaviour
         _playerState.NetColor.OnValueChanged += OnColorChanged;
         _playerState.Health.OnValueChanged += OnStatsChanged;
         _playerState.Score.OnValueChanged += OnStatsChanged;
+        _playerState.Ammo.OnValueChanged += OnStatsChanged;
         _playerState.Nickname.OnValueChanged += OnNicknameChanged;
+        _playerState.IsAlive.OnValueChanged += OnAliveChanged;
 
         _renderer.material.color = _playerState.NetColor.Value;
         UpdateUI();
@@ -25,18 +28,42 @@ public class PlayerUI : NetworkBehaviour
         _playerState.NetColor.OnValueChanged -= OnColorChanged;
         _playerState.Health.OnValueChanged -= OnStatsChanged;
         _playerState.Score.OnValueChanged -= OnStatsChanged;
+        _playerState.Ammo.OnValueChanged -= OnStatsChanged;
         _playerState.Nickname.OnValueChanged -= OnNicknameChanged;
+        _playerState.IsAlive.OnValueChanged -= OnAliveChanged;
     }
 
     private void OnColorChanged(Color oldColor, Color newColor) => _renderer.material.color = newColor;
     private void OnStatsChanged(int oldValue, int newValue) => UpdateUI();
     private void OnNicknameChanged(FixedString32Bytes oldValue, FixedString32Bytes newValue) => UpdateUI();
 
+    private void OnAliveChanged(bool oldVal, bool isAlive)
+    {
+        _renderer.enabled = isAlive; // Скрываем/показываем модель
+        UpdateUI();
+        
+        if (!isAlive && IsOwner) StartCoroutine(RespawnTimerRoutine());
+    }
+
     private void UpdateUI()
     {
         if (PlayerStatsText != null)
         {
-            PlayerStatsText.text = $"{_playerState.Nickname.Value}\nHP: {_playerState.Health.Value}\nScore: {_playerState.Score.Value}";
+            if (_playerState.IsAlive.Value)
+            {
+                PlayerStatsText.text = $"{_playerState.Nickname.Value}\nHP: {_playerState.Health.Value} | Ammo: {_playerState.Ammo.Value}\nScore: {_playerState.Score.Value}";
+            }
+        }
+    }
+
+    private IEnumerator RespawnTimerRoutine()
+    {
+        int timer = 3;
+        while (timer > 0 && !_playerState.IsAlive.Value)
+        {
+            PlayerStatsText.text = $"DEAD\nRespawning in {timer}...";
+            yield return new WaitForSeconds(1f);
+            timer--;
         }
     }
 }
