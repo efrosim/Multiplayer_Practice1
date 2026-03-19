@@ -39,6 +39,10 @@ public class PlayerHealth : NetworkBehaviour, IDamageable, IHealable
     {
         if (!base.IsServerInitialized || !_playerState.IsAlive.Value) return;
 
+        // ИСПРАВЛЕНО: Урон не проходит в лобби и на экране результатов
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState.Value != GameManager.GameState.InProgress) 
+            return;
+
         _playerState.Health.Value = Mathf.Max(0, _playerState.Health.Value - damage);
         HitFlashObserversRpc();
 

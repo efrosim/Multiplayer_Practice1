@@ -131,7 +131,12 @@ public class PlayerMovement : NetworkBehaviour
 
     private MoveData BuildMoveData()
     {
-        if (!_playerState.IsAlive.Value) return default;
+        // ИСПРАВЛЕНО: Добавлено .Value к CurrentState
+        bool canMove = _playerState.IsAlive.Value && 
+                       GameManager.Instance != null && 
+                       GameManager.Instance.CurrentState.Value == GameManager.GameState.InProgress;
+
+        if (!canMove) return default;
 
         MoveData md = new MoveData
         {

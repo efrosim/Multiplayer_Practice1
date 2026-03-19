@@ -20,6 +20,10 @@ public class PlayerCombat : NetworkBehaviour
     {
         if (!base.IsOwner || !_playerState.IsAlive.Value) return;
 
+        // ИСПРАВЛЕНО: Запрещаем стрелять, если матч не идет
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState.Value != GameManager.GameState.InProgress) 
+            return;
+
         if (Input.GetKeyDown(KeyCode.C) && Cursor.lockState == CursorLockMode.Locked)
             _playerState.RequestRandomColorServerRpc();
 

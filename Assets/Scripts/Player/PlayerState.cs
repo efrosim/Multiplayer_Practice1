@@ -56,4 +56,12 @@ public class PlayerState : NetworkBehaviour
         UIUpdateNeeded?.Invoke();
         AliveStateChanged?.Invoke(newVal);
     }
+    
+    public void ResetStats()
+    {
+        Health.Value = 100;
+        Ammo.Value = 10;
+        Score.Value = 0;
+        IsAlive.Value = true;
+    }
 }
