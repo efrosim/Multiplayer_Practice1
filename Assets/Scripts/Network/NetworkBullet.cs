@@ -1,17 +1,15 @@
-﻿using Unity.Netcode;
+﻿using FishNet.Object;
 using UnityEngine;
 
 public class NetworkBullet : NetworkBehaviour
 {
-    public float Speed = 10f;
+    public float Speed = 20f;
     public int Damage = 25;
     public float LifeTime = 3f;
-    
-    public ulong OwnerId;
 
-    public override void OnNetworkSpawn()
+    public override void OnStartNetwork()
     {
-        if (IsServer) Invoke(nameof(DestroyBullet), LifeTime);
+        if (base.IsServerInitialized) Invoke(nameof(DestroyBullet), LifeTime);
     }
 
     private void Update()
@@ -21,16 +19,14 @@ public class NetworkBullet : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return;
+        if (!base.IsServerInitialized) return;
 
-        // Зависим от интерфейса, а не от конкретного класса игрока
         if (other.TryGetComponent(out IDamageable damageable))
         {
-            // Проверка на урон самому себе
-            if (other.TryGetComponent(out NetworkBehaviour netObj) && netObj.OwnerClientId == OwnerId) 
-                return;
+            // Используем встроенный base.OwnerId для проверки урона по себе
+            if (other.TryGetComponent(out NetworkBehaviour netObj) && netObj.OwnerId == base.OwnerId) return;
 
-            damageable.TakeDamage(Damage, OwnerId);
+            damageable.TakeDamage(Damage, base.OwnerId);
             DestroyBullet();
         }
         else if (!other.isTrigger)
@@ -41,6 +37,6 @@ public class NetworkBullet : NetworkBehaviour
 
     private void DestroyBullet()
     {
-        if (NetworkObject.IsSpawned) NetworkObject.Despawn();
+        if (base.IsSpawned) base.Despawn();
     }
 }

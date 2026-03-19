@@ -1,4 +1,4 @@
-﻿using Unity.Netcode;
+﻿using FishNet.Object;
 using UnityEngine;
 
 public class PlayerCamera : NetworkBehaviour
@@ -13,9 +13,11 @@ public class PlayerCamera : NetworkBehaviour
     private float _pitch;
     private float _currentCameraDistance;
 
-    public override void OnNetworkSpawn()
+    // ИСПРАВЛЕНО: OnStartNetwork вместо OnNetworkSpawn
+    public override void OnStartNetwork()
     {
-        if (!IsOwner)
+        // ИСПРАВЛЕНО: base.Owner.IsLocalClient вместо IsOwner
+        if (!base.Owner.IsLocalClient)
         {
             enabled = false; // Полностью отключаем скрипт для чужих игроков
             return;

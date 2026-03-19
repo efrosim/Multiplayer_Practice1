@@ -1,21 +1,14 @@
 ﻿using System.Collections;
-using Unity.Netcode;
+using FishNet.Object;
 using UnityEngine;
 
-public class PickupManager : MonoBehaviour
+public class PickupManager : NetworkBehaviour
 {
-    [SerializeField] private GameObject _healthPickupPrefab;
-    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private GameObject _healthPickupPrefab;[SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private float _respawnDelay = 10f;
 
-    private void Start()
+    public override void OnStartServer()
     {
-        NetworkManager.Singleton.OnServerStarted += SpawnAll;
-    }
-
-    private void SpawnAll()
-    {
-        if (!NetworkManager.Singleton.IsServer) return;
         foreach (var point in _spawnPoints) SpawnPickup(point.position);
     }
 
@@ -34,6 +27,6 @@ public class PickupManager : MonoBehaviour
     {
         var go = Instantiate(_healthPickupPrefab, position, Quaternion.identity);
         go.GetComponent<HealthPickup>().Init(this);
-        go.GetComponent<NetworkObject>().Spawn();
+        base.ServerManager.Spawn(go);
     }
 }

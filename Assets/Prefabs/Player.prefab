@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 3907962460696951686}
   - component: {fileID: 5369864158198015691}
   - component: {fileID: 2401696390696611459}
-  - component: {fileID: 7427724610124132090}
-  - component: {fileID: -2258000362166798419}
   - component: {fileID: 9015173822104833956}
   - component: {fileID: 4928952635145837728}
   - component: {fileID: 840108868481582883}
@@ -22,6 +20,7 @@ GameObject:
   - component: {fileID: 6793240162633684196}
   - component: {fileID: 1872492055945568949}
   - component: {fileID: 8118839793405855293}
+  - component: {fileID: 5076633414872257610}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -126,77 +125,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7427724610124132090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 362549746377435639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 30632492
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!114 &-2258000362166798419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 362549746377435639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 846add907ad44eeab80f8463f552c575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ClientNetworkTransform
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
-  AutoOwnerAuthorityTickOffset: 1
-  PositionInterpolationType: 0
-  RotationInterpolationType: 0
-  ScaleInterpolationType: 0
-  PositionLerpSmoothing: 1
-  PositionMaxInterpolationTime: 0.1
-  RotationLerpSmoothing: 1
-  RotationMaxInterpolationTime: 0.1
-  ScaleLerpSmoothing: 1
-  ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
-  TickSyncChildren: 0
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!54 &9015173822104833956
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -236,52 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ba38da56b17474784be981471a33634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerState
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetColor:
-    m_InternalValue: {r: 1, g: 1, b: 1, a: 1}
-  Health:
-    m_InternalValue: 100
-  Score:
-    m_InternalValue: 0
-  IsAlive:
-    m_InternalValue: 1
-  Ammo:
-    m_InternalValue: 10
-  Nickname:
-    m_InternalValue:
-      utf8LengthInBytes: 0
-      bytes:
-        offset0000:
-          byte0000: 0
-          byte0001: 0
-          byte0002: 0
-          byte0003: 0
-          byte0004: 0
-          byte0005: 0
-          byte0006: 0
-          byte0007: 0
-          byte0008: 0
-          byte0009: 0
-          byte0010: 0
-          byte0011: 0
-          byte0012: 0
-          byte0013: 0
-          byte0014: 0
-          byte0015: 0
-        byte0016: 0
-        byte0017: 0
-        byte0018: 0
-        byte0019: 0
-        byte0020: 0
-        byte0021: 0
-        byte0022: 0
-        byte0023: 0
-        byte0024: 0
-        byte0025: 0
-        byte0026: 0
-        byte0027: 0
-        byte0028: 0
-        byte0029: 0
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &840108868481582883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc5b9b2ce3e43edbddc6484d8f9caef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUI
-  ShowTopMostFoldoutHeaderGroup: 1
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
   _playerState: {fileID: 4928952635145837728}
   _renderer: {fileID: 5369864158198015691}
   PlayerStatsText: {fileID: 4434100255930062897}
@@ -310,9 +197,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 942ee530787e4af99df60d4dd5ee49ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  ShowTopMostFoldoutHeaderGroup: 1
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
   _playerState: {fileID: 4928952635145837728}
   MoveSpeed: 5
+  DashSpeed: 20
+  DashDuration: 0.2
   Gravity: -9.81
 --- !u!114 &8782546320072964268
 MonoBehaviour:
@@ -326,7 +217,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57bcbfdab133496da431a00db4d2a2ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
-  ShowTopMostFoldoutHeaderGroup: 1
+  _componentIndexCache: 3
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
   MouseSensitivity: 3
   NormalCameraDistance: 5
   AimCameraDistance: 2
@@ -368,7 +261,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e76345eb333d46fea2e9252c28f1f2b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  ShowTopMostFoldoutHeaderGroup: 1
+  _componentIndexCache: 4
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
   _playerState: {fileID: 4928952635145837728}
   _renderer: {fileID: 5369864158198015691}
   _characterController: {fileID: 6793240162633684196}
@@ -384,11 +279,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233d69538dae4a8ea59df1cad98e4184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  ShowTopMostFoldoutHeaderGroup: 1
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 5076633414872257610}
+  _networkObjectCache: {fileID: 0}
   _playerState: {fileID: 4928952635145837728}
   BulletSpawnPoint: {fileID: 1335345142985879900}
   BulletPrefab: {fileID: 1094578691025535636, guid: 9a830bf1773dc74449afe1e555f08267, type: 3}
   Cooldown: 0.4
+--- !u!114 &5076633414872257610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362549746377435639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
+  <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  <PredictedOwner>k__BackingField: {fileID: 0}
+  NetworkBehaviours: []
+  InitializedParentNetworkBehaviour: {fileID: 0}
+  InitializedNestedNetworkObjects: []
+  RuntimeParentNetworkBehaviour: {fileID: 0}
+  RuntimeChildNetworkBehaviours: []
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _preventDespawnOnDisconnect: 0
+  _defaultDespawnType: 0
+  _initializedTimestamp: 0
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _localReconcileCorrectionType: 2
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 65535
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 2092870565765373345
+  SceneId: 0
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    Scale: {x: 0, y: 0, z: 0}
+    IsValid: 0
 --- !u!1 &648053486376607721
 GameObject:
   m_ObjectHideFlags: 0

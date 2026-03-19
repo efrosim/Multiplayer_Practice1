@@ -1,20 +1,20 @@
+using FishNet;
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
-{[Header("UI Элементы")]
-    public TMP_InputField NicknameInput; // Поле для ввода ника
+{
+    [Header("UI Элементы")]
+    public TMP_InputField NicknameInput;
     public Button HostButton;
     public Button ClientButton;
-    public GameObject MenuPanel; // Панель меню, чтобы скрыть её после старта
+    public GameObject MenuPanel;
     
     public static string PlayerNickname { get; private set; } = "Player";
 
     private void Start()
     {
-        // Привязываем кнопки к методам
         HostButton.onClick.AddListener(StartAsHost);
         ClientButton.onClick.AddListener(StartAsClient);
     }
@@ -22,20 +22,21 @@ public class MainMenuUI : MonoBehaviour
     public void StartAsHost()
     {
         SaveNickname();
-        NetworkManager.Singleton.StartHost();
-        MenuPanel.SetActive(false); // Прячем меню
+        // В FishNet Хост = Сервер + Клиент
+        InstanceFinder.ServerManager.StartConnection();
+        InstanceFinder.ClientManager.StartConnection();
+        MenuPanel.SetActive(false);
     }
 
     public void StartAsClient()
     {
         SaveNickname();
-        NetworkManager.Singleton.StartClient();
-        MenuPanel.SetActive(false); // Прячем меню
+        InstanceFinder.ClientManager.StartConnection();
+        MenuPanel.SetActive(false);
     }
 
     private void SaveNickname()
     {
-        // Если поле пустое, задаем стандартное имя
         string rawValue = NicknameInput != null ? NicknameInput.text : string.Empty;
         PlayerNickname = string.IsNullOrWhiteSpace(rawValue) ? "Player" : rawValue.Trim();
     }

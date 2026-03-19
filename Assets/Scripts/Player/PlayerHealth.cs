@@ -1,28 +1,54 @@
 ﻿using System.Collections;
-using Unity.Netcode;
+using FishNet.Object;
 using UnityEngine;
 
-// Класс отвечает ТОЛЬКО за здоровье, смерть и возрождение (Single Responsibility)
 public class PlayerHealth : NetworkBehaviour, IDamageable, IHealable
 {
     [SerializeField] private PlayerState _playerState;
     [SerializeField] private Renderer _renderer;
-    [SerializeField] private CharacterController _characterController;
+    
+    private Coroutine _flashCoroutine;
 
-    public void TakeDamage(int damage, ulong shooterId)
+    public override void OnStartNetwork()
     {
-        if (!IsServer || !_playerState.IsAlive.Value) return;
+        _playerState.NetColor.OnChange += OnColorChanged;
+        _playerState.AliveStateChanged += OnAliveChanged;
+        
+        if (_renderer != null) _renderer.material.color = _playerState.NetColor.Value;
+    }
+
+    public override void OnStopNetwork()
+    {
+        _playerState.NetColor.OnChange -= OnColorChanged;
+        _playerState.AliveStateChanged -= OnAliveChanged;
+    }
+
+    private void OnColorChanged(Color oldColor, Color newColor, bool asServer)
+    {
+        // Меняем базовый цвет, только если сейчас не идет мигание урона
+        if (_flashCoroutine == null && _renderer != null)
+            _renderer.material.color = newColor;
+    }
+
+    private void OnAliveChanged(bool isAlive)
+    {
+        if (_renderer != null) _renderer.enabled = isAlive;
+    }
+
+    public void TakeDamage(int damage, int shooterId)
+    {
+        if (!base.IsServerInitialized || !_playerState.IsAlive.Value) return;
 
         _playerState.Health.Value = Mathf.Max(0, _playerState.Health.Value - damage);
-        HitFlashClientRpc();
+        HitFlashObserversRpc();
 
         if (_playerState.Health.Value == 0)
         {
-            _playerState.IsAlive.Value = false; // Игрок умирает
+            _playerState.IsAlive.Value = false;
 
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(shooterId, out var shooterClient))
+            if (base.ServerManager.Clients.TryGetValue(shooterId, out var shooterClient))
             {
-                var shooterState = shooterClient.PlayerObject.GetComponent<PlayerState>();
+                var shooterState = shooterClient.FirstObject.GetComponent<PlayerState>();
                 if (shooterState != null) shooterState.Score.Value += 1;
             }
 
@@ -32,40 +58,41 @@ public class PlayerHealth : NetworkBehaviour, IDamageable, IHealable
 
     public void Heal(int amount)
     {
-        if (!IsServer || !_playerState.IsAlive.Value || _playerState.Health.Value >= 100) return;
+        if (!base.IsServerInitialized || !_playerState.IsAlive.Value || _playerState.Health.Value >= 100) return;
         _playerState.Health.Value = Mathf.Min(100, _playerState.Health.Value + amount);
     }
 
     private IEnumerator RespawnRoutine()
     {
-        yield return new WaitForSeconds(3f); // Ждем 3 секунды на сервере
+        yield return new WaitForSeconds(3f);
 
         _playerState.Health.Value = 100;
-        _playerState.Ammo.Value = 10; // Восстанавливаем патроны при респавне
+        _playerState.Ammo.Value = 10;
         
         Vector3 randomSpawnPoint = new Vector3(Random.Range(-5f, 5f), 1f, Random.Range(-5f, 5f));
-        ForceRespawnClientRpc(randomSpawnPoint);
         
-        _playerState.IsAlive.Value = true; // Игрок снова жив
+        // Делегируем телепортацию компоненту движения
+        if (TryGetComponent(out PlayerMovement movement))
+        {
+            movement.Teleport(randomSpawnPoint);
+        }
+        
+        _playerState.IsAlive.Value = true;
     }
 
-    [ClientRpc]
-    private void HitFlashClientRpc()
+    [ObserversRpc]
+    private void HitFlashObserversRpc()
     {
-        StartCoroutine(FlashRedRoutine());
+        if (!gameObject.activeInHierarchy) return;
+        if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
+        _flashCoroutine = StartCoroutine(FlashRedRoutine());
     }
 
     private IEnumerator FlashRedRoutine()
     {
-        _renderer.material.color = Color.red;
+        if (_renderer != null) _renderer.material.color = Color.red;
         yield return new WaitForSeconds(0.15f);
-        _renderer.material.color = _playerState.NetColor.Value;
-    }[ClientRpc]
-    private void ForceRespawnClientRpc(Vector3 spawnPosition)
-    {
-        // CharacterController блокирует телепортацию, его нужно выключить на кадр
-        if (_characterController != null) _characterController.enabled = false;
-        transform.position = spawnPosition;
-        if (_characterController != null) _characterController.enabled = true;
+        if (_renderer != null) _renderer.material.color = _playerState.NetColor.Value;
+        _flashCoroutine = null;
     }
 }

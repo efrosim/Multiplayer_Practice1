@@ -1,4 +1,4 @@
-﻿using Unity.Netcode;
+﻿using FishNet.Object;
 using UnityEngine;
 
 public class HealthPickup : NetworkBehaviour
@@ -15,12 +15,10 @@ public class HealthPickup : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return; // Только сервер обрабатывает подбор
+        if (!base.IsServerInitialized) return;
 
-        // DIP: Зависим от абстракции IHealable, а не от PlayerHealth
         if (other.TryGetComponent(out IHealable healable))
         {
-            // Проверяем, нужен ли хил (чтобы не съесть аптечку впустую)
             if (other.TryGetComponent(out PlayerState state))
             {
                 if (!state.IsAlive.Value || state.Health.Value >= 100) return;
@@ -28,7 +26,7 @@ public class HealthPickup : NetworkBehaviour
 
             healable.Heal(_healAmount);
             _manager.OnPickedUp(_spawnPosition);
-            NetworkObject.Despawn(destroy: true);
+            base.Despawn();
         }
     }
 }

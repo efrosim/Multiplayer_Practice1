@@ -1,4 +1,4 @@
 ﻿public interface IDamageable
 {
-    void TakeDamage(int damage, ulong shooterId);
+    void TakeDamage(int damage, int shooterId);
 }
